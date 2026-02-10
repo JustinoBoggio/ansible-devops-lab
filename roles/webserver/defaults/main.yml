@@ -1,0 +1,20 @@
+---
+# Default variables for the webserver role
+# These can be easily overridden by group_vars, host_vars, or playbook vars
+
+# The title to display on the webpage
+web_page_title: "Welcome to My DevOps Lab"
+
+# The port Nginx listens on (inside the container configuration)
+nginx_listen_port: 80
+
+# List of common system packages to install
+system_packages:
+  - git
+  - htop
+  - curl
+  - vim
+  - net-tools
+
+# Toggle to enable maintenance mode (true/false)
+maintenance_mode: false

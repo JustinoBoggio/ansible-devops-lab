@@ -1,5 +1,14 @@
 ---
 # Playbook to configure a basic web server using Nginx
+- name: Install essential system packages
+  apt:
+    # We use the magic variable 'item' which holds the current value of the loop
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  # The loop keyword iterates over our defined list
+  loop: "{{ system_packages }}"
+
 - name: Ensure Nginx is installed
   apt:
     name: nginx
@@ -13,20 +22,24 @@
     name: nginx
     state: started
 
-# - name: Create a custom index.html
-#   copy:
-#     content: "<h1>Ansible is working on {{ ansible_facts['hostname'] }}</h1>"
-#     dest: /var/www/html/index.html
-#     owner: www-data
-#     group: www-data
-#     mode: '0644'
-
-- name: Deploy dynamic index.html from template
-  # The 'template' module processes Jinja2 files before sending them
+- name: Deploy normal index page
   template:
-    src: templates/index.html.j2
+    src: index.html.j2
     dest: /var/www/html/index.html
     owner: www-data
     group: www-data
     mode: '0644'
+  # Logic: Only run this task if maintenance_mode is FALSE
+  when: not (maintenance_mode | bool)
   notify: restart nginx # This matches the name in handlers/main.yml
+
+- name: Deploy maintenance page
+  template:
+    src: maintenance.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  # Logic: Only run this task if maintenance_mode is TRUE
+  when: maintenance_mode | bool
+  notify: restart nginx
