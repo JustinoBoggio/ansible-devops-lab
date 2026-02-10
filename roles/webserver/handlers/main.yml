@@ -1,0 +1,6 @@
+---
+# Handlers are only triggered when a task reports a 'changed' state
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

@@ -1,0 +1,8 @@
+---
+# Main entry point for our infrastructure configuration
+- name: Deploy Web Infrastructure
+  hosts: webservers
+  gather_facts: yes
+
+  roles:
+    - webserver
