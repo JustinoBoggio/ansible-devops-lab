@@ -1,0 +1,42 @@
+---
+- name: Install PostgreSQL packages
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - python3-psycopg2 # Required for Ansible to interact with Postgres
+    state: present
+    update_cache: yes
+
+- name: Ensure PostgreSQL service is running
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Create Application Database
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    state: present
+  become: yes
+  become_user: postgres
+
+# Only handles user creation.
+- name: Create Application User
+  community.postgresql.postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    state: present
+  become: yes
+  become_user: postgres
+
+# Task specifically for granting privileges
+- name: Grant privileges to user
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    privs: ALL
+    type: database
+  become: yes
+  become_user: postgres

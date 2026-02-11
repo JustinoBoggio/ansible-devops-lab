@@ -1,15 +1,23 @@
 ---
-# Main entry point for our infrastructure configuration
-- name: Deploy Web Infrastructure
-  hosts: webservers
+# Master Playbook for Multi-Tier Architecture
+
+# 1. DB Server Configuration (Backend)
+- name: Deploy Database Layer
+  hosts: dbservers  # Only applies to node2
   gather_facts: yes
   
-  # We can override role defaults here at the Play level
-  #vars:
-  #  web_page_title: "Overridden by Playbook!"
+  roles:
+    - dbserver
+
+# 2. Web Server Configuration (Frontend)
+- name: Deploy Web Layer
+  hosts: loadbalancers # Only applies to node1
+  gather_facts: yes
+
+  vars:
+    # We need to tell the webserver role how to connect to the database
+    # We use the 'hostvars' magic variable to access variables from other hosts
+    db_host: "{{ hostvars['node2']['ansible_host'] }}" 
 
   roles:
-    # 1. First, we ensure Git is installed using the community role
-    - role: geerlingguy.git
-    # 2. Then, we configure our webserver using our custom role
-    - role:  webserver
+    - webserver

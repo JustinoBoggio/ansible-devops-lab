@@ -1,0 +1,6 @@
+---
+
+db_name: myappdb
+db_user: myappuser
+db_password: "supersecretpassword"
+db_port: 5432
