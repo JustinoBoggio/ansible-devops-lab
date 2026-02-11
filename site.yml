@@ -17,7 +17,7 @@
   vars:
     # We need to tell the webserver role how to connect to the database
     # We use the 'hostvars' magic variable to access variables from other hosts
-    db_host: "{{ hostvars['node2']['ansible_host'] }}" 
+    db_host: "node2"
 
   roles:
     - webserver

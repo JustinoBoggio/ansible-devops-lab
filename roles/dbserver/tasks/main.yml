@@ -14,6 +14,20 @@
     state: started
     enabled: yes
 
+- name: Allow remote connections in postgresql.conf
+  lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf # Adjust version if needed
+    regexp: "^#?listen_addresses"
+    line: "listen_addresses = '*'"
+    state: present
+
+- name: Allow remote connections in pg_hba.conf
+  lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf
+    line: "host    all             all             0.0.0.0/0            scram-sha-256"
+    state: present
+  notify: restart postgresql
+
 - name: Create Application Database
   community.postgresql.postgresql_db:
     name: "{{ db_name }}"

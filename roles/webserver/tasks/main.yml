@@ -26,7 +26,16 @@
   service:
     name: nginx
     state: started
+    enabled: yes
 
+- name: Install Python Flask and DB Driver
+  pip:
+    name:
+      - flask
+      - psycopg2-binary
+    state: present
+
+# --- Static Content & Maintenance Mode (Legacy/Landing Page) ---
 - name: Deploy normal index page
   template:
     src: index.html.j2
@@ -65,6 +74,7 @@
     state: present
   notify: restart nginx
 
+# --- Educational Task: Error Handling Demo (Optional) ---
 - name: Download optional company logo
   get_url:
     url: "http://google.com/this-file-does-not-exist.png"
@@ -80,6 +90,34 @@
   # Logic: Only run this if the previous task failed
   when: logo_download_result is failed
 
-- name: Verify Secret
-  debug:
-    msg: "The secret API key is: {{ api_key }}"
+# --- Application Deployment ---
+- name: Deploy Application Code
+  copy:
+    src: files/app.py
+    dest: /opt/app.py
+    mode: '0755'
+
+- name: Kill running Flask app
+  shell: "pkill -f app.py || true"
+  ignore_errors: yes
+
+- name: Run Flask App in Background
+  shell: |
+    nohup python3 /opt/app.py > /var/log/flask.log 2>&1 &
+  environment:
+    # Inject DB connection details from Ansible variables
+    DB_HOST: "{{ db_host }}"   # Come from node 2 inventory
+    DB_NAME: "myappdb"         # hardcoded for simplicity
+    DB_USER: "myappuser"
+    DB_PASS: "{{ db_password }}"
+  async: 10
+  poll: 0
+
+# --- Connectivity Check ---
+- name: Verify connectivity to PostgreSQL
+  wait_for:
+    host: "{{ db_host }}"
+    port: 5432
+    timeout: 5
+    state: started
+    msg: "Timeout waiting for Database to respond on port 5432"

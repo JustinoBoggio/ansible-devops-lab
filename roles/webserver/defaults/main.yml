@@ -15,6 +15,9 @@ system_packages:
   - curl
   - vim
   - net-tools
+  - python3-pip
+  - python3-venv
+  - libpq-dev
 
 # Toggle to enable maintenance mode (true/false)
 maintenance_mode: false
