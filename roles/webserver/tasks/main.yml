@@ -1,5 +1,10 @@
 ---
 # Playbook to configure a basic web server using Nginx
+
+# 1. Load the encrypted secrets
+- name: Include secrets
+  include_vars: secrets.yml
+
 - name: Install essential system packages
   apt:
     # We use the magic variable 'item' which holds the current value of the loop
@@ -43,3 +48,38 @@
   # Logic: Only run this task if maintenance_mode is TRUE
   when: maintenance_mode | bool
   notify: restart nginx
+
+- name: Security - Hide Nginx version in HTTP headers
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    # Regex explanation:
+    # ^\s* -> Line starts with matching spaces (optional)
+    # #?    -> Can have a comment hash '#' (optional)
+    # \s* -> Spaces after comment (optional)
+    # server_tokens -> The literal text "server_tokens"
+    regexp: '^\s*#?\s*server_tokens\s+'
+    # The final line we want in the file
+    line: '	server_tokens off;'
+    # If the regex is not found, where should we add the line? (Optional)
+    insertafter: 'http {'
+    state: present
+  notify: restart nginx
+
+- name: Download optional company logo
+  get_url:
+    url: "http://google.com/this-file-does-not-exist.png"
+    dest: /var/www/html/logo.png
+  # Don't stop the playbook if this fails
+  ignore_errors: yes
+  # Save the result (success or failure) into a variable
+  register: logo_download_result
+
+- name: Report download status
+  debug:
+    msg: "⚠️ WARNING: The custom logo could not be downloaded. Using default."
+  # Logic: Only run this if the previous task failed
+  when: logo_download_result is failed
+
+- name: Verify Secret
+  debug:
+    msg: "The secret API key is: {{ api_key }}"

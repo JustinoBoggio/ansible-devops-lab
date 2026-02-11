@@ -1,0 +1,7 @@
+---
+# requirements.yml
+# This file lists external roles to download from Ansible Galaxy
+
+# Installing 'git' using the most popular role in the world
+- src: geerlingguy.git
+  version: "3.0.1"  # ALWAYS pin the version to avoid breaking changes

@@ -9,4 +9,7 @@
   #  web_page_title: "Overridden by Playbook!"
 
   roles:
-    - webserver
+    # 1. First, we ensure Git is installed using the community role
+    - role: geerlingguy.git
+    # 2. Then, we configure our webserver using our custom role
+    - role:  webserver

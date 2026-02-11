@@ -2,3 +2,6 @@
 .ansible/
 id_rsa
 id_rsa.pub
+
+# Ignore community roles (we install them via requirements.yml)
+roles/geerlingguy.git/
