@@ -1,0 +1,22 @@
+# .ansible-lint configuration
+
+profile: min  # Usamos el perfil mínimo para empezar
+
+# Qué archivos ignorar
+exclude_paths:
+  - .github/
+  - roles/geerlingguy.git/
+  - .vault_pass
+
+# Lista de reglas a IGNORAR (Skip List)
+skip_list:
+  - "fqcn"              # Ignora pedir nombre completo (ej: ansible.builtin.copy)
+  - "var-naming"        # Ignora prefijos en variables
+  - "no-changed-when"   # Ignora alertas en comandos shell
+  - "yaml"              # Ignora espacios, newlines y yes/no
+  - "role-name"         # Ignora nombres de roles
+  - "risky-file-permissions" # Ignora permisos en get_url
+  - "meta-incorrect"    # Ignora metadata de autor/licencia
+  - "ignore-errors"     # Permite usar ignore_errors: yes
+  - "name[casing]"      # Ignora mayúsculas en nombres de tareas
+  - "schema[meta]"      # Ignora validación estricta de meta/main.yml

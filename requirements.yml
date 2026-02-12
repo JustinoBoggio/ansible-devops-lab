@@ -1,7 +1,8 @@
 ---
-# requirements.yml
-# This file lists external roles to download from Ansible Galaxy
+roles:
+  - src: geerlingguy.git
+    version: "3.0.1"
 
-# Installing 'git' using the most popular role in the world
-- src: geerlingguy.git
-  version: "3.0.1"  # ALWAYS pin the version to avoid breaking changes
+collections:
+  - name: community.postgresql
+    version: "3.0.0"
