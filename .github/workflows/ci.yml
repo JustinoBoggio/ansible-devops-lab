@@ -31,3 +31,9 @@ jobs:
       - name: Run Ansible Lint
         run: |
           ansible-lint
+
+      - name: Run Ansible Syntax Check
+        run: |
+          ansible-playbook site.yml --syntax-check
+        env:
+          ANSIBLE_VAULT_PASSWORD_FILE: .vault_pass
