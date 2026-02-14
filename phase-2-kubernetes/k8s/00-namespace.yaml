@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # The name of our isolated environment
+  name: ansible-lab
+  labels:
+    # Standard label to organize projects
+    name: ansible-lab

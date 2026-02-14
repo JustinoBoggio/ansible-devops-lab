@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: ansible-lab
+data:
+  # Non-sensitive configuration
+  # The Service Name acts as the DNS hostname.
+  # We will name our DB service 'postgres-service', so the host is just that name.
+  DB_HOST: "postgres-service"
+  DB_NAME: "myappdb"
+  DB_USER: "postgres"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+  namespace: ansible-lab
+type: Opaque
+stringData:
+  # Sensitive data (In real enterprise, use SealedSecrets or Vault)
+  DB_PASS: "supersecretpassword"
