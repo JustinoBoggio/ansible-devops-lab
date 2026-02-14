@@ -33,25 +33,25 @@ Modern Cloud-Native deployment using **Kind (Kubernetes in Docker)**.
 1. Create the cluster:
 
 ```bash
-    kind create cluster --config phase-2-kubernetes/kind-config.yaml
+kind create cluster --config phase-2-kubernetes/kind-config.yaml
 ```
 
 2. Build & Load the image:
 
 ```bash
-    cd phase-2-kubernetes/app
-    docker build -t my-python-app:v1 .
-    kind load docker-image my-python-app:v1 --name ansible-lab
+cd phase-2-kubernetes/app
+docker build -t my-python-app:v1 .
+kind load docker-image my-python-app:v1 --name ansible-lab
 ```
 3. Deploy manifests:
 
 ```bash
-    kubectl apply -f phase-2-kubernetes/k8s/
+kubectl apply -f phase-2-kubernetes/k8s/
 ```
 
 4. Access the App:
 
 ```bash
-    kubectl port-forward -n ansible-lab service/python-app-service 8080:80
-    # Open browser at http://localhost:8080
+kubectl port-forward -n ansible-lab service/python-app-service 8080:80
+# Open browser at http://localhost:8080
 ```
