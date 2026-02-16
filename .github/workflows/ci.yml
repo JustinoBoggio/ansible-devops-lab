@@ -34,6 +34,7 @@ jobs:
 
       - name: Run Ansible Syntax Check
         run: |
+          cd phase-1-ansible
           ansible-playbook site.yml --syntax-check
         env:
-          ANSIBLE_VAULT_PASSWORD_FILE: .vault_pass
+          ANSIBLE_VAULT_PASSWORD_FILE: ${{ github.workspace }}/.vault_pass
