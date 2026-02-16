@@ -26,7 +26,7 @@ Modern Cloud-Native deployment using **Kind (Kubernetes in Docker)**.
 
 ### Prerequisites
 - Docker & WSL2
-- Ansible & Molecule
+- Ansible
 - Kind & Kubectl
 
 ### Running Phase 2 (Kubernetes)
