@@ -12,3 +12,5 @@ roles/geerlingguy.git/
 # Ignore secrets.yaml inside phase-3-helm
 /phase-3-helm/**/my_secrets.yaml
 *.secret.yaml
+
+alertmanager-values.yaml
