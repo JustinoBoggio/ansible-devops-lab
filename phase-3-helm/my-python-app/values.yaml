@@ -16,6 +16,6 @@ service:
   nodePort: 30000
 
 database:
-  host: postgres-service
+  host: postgres-service-broken # Chaos engineering
   name: myappdb
   user: postgres
