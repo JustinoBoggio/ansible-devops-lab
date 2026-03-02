@@ -35,9 +35,16 @@ spec:
                   name: {{ .Chart.Name }}-db-secret
                   key: db-password
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            #httpGet:
+            #  path: /
+            #  port: http
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                # Fetch the webpage silently and look for the word "SUCCESS"
+                # If grep fails to find it, it returns exit code 1 (failure)
+                - 'curl -s http://localhost:5000/ | grep "SUCCESS"'
           resources:
             requests:
               memory: "64Mi"
