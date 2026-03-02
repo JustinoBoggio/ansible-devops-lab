@@ -1,22 +1,22 @@
 # .ansible-lint configuration
 
-profile: min  # Usamos el perfil mínimo para empezar
+profile: min  # We use the minimal profile to start with a clean slate and only add the rules we care about.
 
-# Qué archivos ignorar
+# Files to ignore
 exclude_paths:
   - .github/
   - roles/geerlingguy.git/
   - .vault_pass
 
-# Lista de reglas a IGNORAR (Skip List)
+# Rules to skip
 skip_list:
-  - "fqcn"              # Ignora pedir nombre completo (ej: ansible.builtin.copy)
-  - "var-naming"        # Ignora prefijos en variables
-  - "no-changed-when"   # Ignora alertas en comandos shell
-  - "yaml"              # Ignora espacios, newlines y yes/no
-  - "role-name"         # Ignora nombres de roles
-  - "risky-file-permissions" # Ignora permisos en get_url
-  - "meta-incorrect"    # Ignora metadata de autor/licencia
-  - "ignore-errors"     # Permite usar ignore_errors: yes
-  - "name[casing]"      # Ignora mayúsculas en nombres de tareas
-  - "schema[meta]"      # Ignora validación estricta de meta/main.yml
+  - "fqcn"              # Ignore full name (ej: ansible.builtin.copy)
+  - "var-naming"        # Ignore variable naming conventions
+  - "no-changed-when"   # Ignore shell command warnings
+  - "yaml"              # Ignore spacing, newlines and yes/no
+  - "role-name"         # Ignore role name conventions
+  - "risky-file-permissions" # Ignore permissions in get_url
+  - "meta-incorrect"    # Ignore author/license metadata
+  - "ignore-errors"     # Allow using ignore_errors: yes
+  - "name[casing]"      # Ignore uppercase in task names
+  - "schema[meta]"      # Ignore strict validation of meta/main.yml

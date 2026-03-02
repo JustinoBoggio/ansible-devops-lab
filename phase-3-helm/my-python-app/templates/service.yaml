@@ -1,0 +1,21 @@
+# phase-3-helm/my-python-app/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-service
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  # Expose the service externally using the type defined in values.yaml
+  type: {{ .Values.service.type }}
+  selector:
+    # Route traffic to the pods matching this label
+    app: {{ .Chart.Name }}
+  ports:
+    - protocol: TCP
+      # Internal cluster port
+      port: {{ .Values.service.port }}
+      # Container port where the Flask app is listening
+      targetPort: {{ .Values.service.targetPort }}
+      # Fixed static port for external access (e.g., from localhost)
+      nodePort: {{ .Values.service.nodePort }}
