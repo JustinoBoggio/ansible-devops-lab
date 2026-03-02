@@ -40,11 +40,11 @@ spec:
             #  port: http
             exec:
               command:
-                - /bin/sh
+                - python
                 - -c
-                # Fetch the webpage silently and look for the word "SUCCESS"
-                # If grep fails to find it, it returns exit code 1 (failure)
-                - 'curl -s http://localhost:5000/ | grep "SUCCESS"'
+                # Use Python's built-in urllib to fetch the page and check for "SUCCESS"
+                # If the word is found, exit with 0 (Healthy). Otherwise, exit with 1 (Failed).
+                - "import urllib.request, sys; sys.exit(0 if 'SUCCESS' in urllib.request.urlopen('http://127.0.0.1:5000/').read().decode('utf-8') else 1)"
           resources:
             requests:
               memory: "64Mi"
