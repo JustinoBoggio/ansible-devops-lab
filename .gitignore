@@ -13,4 +13,8 @@ roles/geerlingguy.git/
 /phase-3-helm/**/my_secrets.yaml
 *.secret.yaml
 
+# Ignore Alertmanager values file (contains sensitive Slack webhook URL)
 alertmanager-values.yaml
+
+# Ignore GCP credentials file
+gcp-credentials.json
