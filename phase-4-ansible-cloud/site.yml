@@ -2,9 +2,20 @@
 - name: Configure Web Server via Dynamic Inventory
   hosts: gcp_web_server
   become: yes  # Use sudo
-  gather_facts: yes
+  gather_facts: no
   vars_files:
     - vars/gcp_config.yml
+
+  pre_tasks:
+    # Wait until the VM is reachable via SSH (Ansible will keep trying until it succeeds or times out)
+    - name: Wait for SSH to become available
+      wait_for_connection:
+        delay: 5    # Wait 5 seconds before starting to check
+        timeout: 300 # Wait up to 5 minutes for the VM to be ready
+
+    # Now we can gather facts to get the VM's IP address and other details
+    - name: Gather Facts manually
+      setup:
 
   roles:
     - nginx_website
