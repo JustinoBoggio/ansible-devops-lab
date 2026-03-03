@@ -1,0 +1,72 @@
+---
+- name: Create GCP Compute Instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    gcp_project: ansible-lab-gcp
+    gcp_auth_kind: serviceaccount
+    gcp_cred_file: "{{ lookup('env', 'GOOGLE_APPLICATION_CREDENTIALS') }}"
+    region: "asia-northeast1"
+    zone: "asia-northeast1-a"
+    machine_type: "e2-micro"
+    ssh_user: "justino"
+    # Path to the public SSH key that will be added to the VM's metadata for SSH access
+    ssh_pub_key_file: "~/.ssh/gcp_key.pub"
+
+  tasks:
+    # Book a Public IP address for the VM
+    - name: Create a Public IP address
+      google.cloud.gcp_compute_address:
+        name: "ansible-web-ip"
+        region: "{{ region }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+      register: public_ip
+
+    # Bring the VPC info to use its selfLink in the VM creation
+    - name: Get Network Info
+      google.cloud.gcp_compute_network_info:
+        filters:
+          - "name = ansible-vpc-network"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+      register: vpc_network
+
+    # Create the VM Instance
+    - name: Create the VM Instance
+      google.cloud.gcp_compute_instance:
+        name: "ansible-web-01"
+        machine_type: "{{ machine_type }}"
+        disks:
+          - auto_delete: true
+            boot: true
+            initialize_params:
+              # Oficial Ubuntu 22.04 LTS image from GCP Marketplace
+              source_image: "projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts"
+              disk_size_gb: 20
+              disk_type: "pd-standard"
+        # Internet connection
+        network_interfaces:
+          - network: "{{ vpc_network.resources[0] }}"
+            access_configs:
+              - name: External NAT
+                nat_ip: "{{ public_ip }}" # Assign the reserved Public IP to the VM
+                type: ONE_TO_ONE_NAT
+        tags:
+          items: ["web-server"] # Needs to match the firewall rule target_tags
+        zone: "{{ zone }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        metadata:
+          ssh-keys: "{{ ssh_user }}:{{ lookup('file', ssh_pub_key_file) }}"
+        state: present
+      register: instance
+
+    - name: Show Public IP
+      debug:
+        msg: "VM Created! Public IP: {{ public_ip.address }}. Connect with: ssh -i ~/.ssh/gcp_key justino@{{ public_ip.address }}"

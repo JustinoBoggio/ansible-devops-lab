@@ -1,0 +1,40 @@
+---
+- name: Setup Google Cloud VPC
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars: 
+    gcp_project: ansible-lab-gcp
+    gcp_auth_kind: serviceaccount
+    # Ansible will look for the credentials file path in the environment variable GOOGLE_APPLICATION_CREDENTIALS
+    gcp_cred_file: "{{ lookup('env', 'GOOGLE_APPLICATION_CREDENTIALS') }}"
+    region: "asia-northeast1" # Tokyo
+    zone: "asia-northeast1-a"
+
+  tasks:
+    - name: Create a VPC Network
+      google.cloud.gcp_compute_network:
+        name: "ansible-vpc-network"
+        auto_create_subnetworks: true
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+      register: vpc_network
+
+    - name: Create a Firewall rule to allow SSH and HTTP
+      google.cloud.gcp_compute_firewall:
+        name: "allow-ssh-http"
+        network: "{{ vpc_network }}"
+        allowed:
+          - ip_protocol: tcp
+            ports: ["22", "80", "5000"]
+        target_tags: ["web-server"]
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+
+    - name: Debug Output
+      debug:
+        msg: "VPC Created! ID: {{ vpc_network.id }}"

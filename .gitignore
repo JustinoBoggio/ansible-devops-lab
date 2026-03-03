@@ -18,3 +18,6 @@ alertmanager-values.yaml
 
 # Ignore GCP credentials file
 gcp-credentials.json
+
+# Editor directories
+.vscode/
