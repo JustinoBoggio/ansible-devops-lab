@@ -1,0 +1,15 @@
+---
+# Configuración Global de GCP
+gcp_project: ansible-lab-gcp
+gcp_auth_kind: serviceaccount
+gcp_cred_file: "{{ lookup('env', 'GOOGLE_APPLICATION_CREDENTIALS') }}"
+region: "asia-northeast1"
+zone: "asia-northeast1-a"
+
+# Configuración de Infraestructura
+vpc_name: "ansible-vpc-network"
+subnet_name: "ansible-subnet"
+vm_name: "ansible-web-01"
+machine_type: "e2-micro"
+ssh_user: "justino"
+ssh_pub_key_file: "~/.ssh/gcp_key.pub"

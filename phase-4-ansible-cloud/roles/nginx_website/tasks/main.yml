@@ -1,0 +1,19 @@
+---
+- name: Ensure Nginx is installed
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Start and Enable Nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Deploy Custom Index Page from Template
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644'
+  notify: Restart Nginx

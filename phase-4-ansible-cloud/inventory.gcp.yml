@@ -1,0 +1,19 @@
+plugin: google.cloud.gcp_compute
+projects:
+  - ansible-lab-gcp
+auth_kind: serviceaccount
+service_account_file: /home/justino/projects/ansible-devops-lab/phase-4-ansible-cloud/gcp-credentials.json
+
+
+keyed_groups:
+  # This will create groups based on the tags of the VM. For example, if a VM has the tag 'web-server', 
+  # it will be added to the group 'gcp_web_server'.
+  - prefix: gcp
+    key: tags['items']
+
+# How we access the VM: by default Ansible uses the internal (private) IP. Since we are outside (in WSL2),
+# We need to tell Ansible to use the external (public) IP. The 'compose' section allows us to define how to access the VM.
+hostnames:
+  - name
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP

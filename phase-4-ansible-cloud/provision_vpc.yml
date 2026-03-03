@@ -3,13 +3,8 @@
   hosts: localhost
   connection: local
   gather_facts: no
-  vars: 
-    gcp_project: ansible-lab-gcp
-    gcp_auth_kind: serviceaccount
-    # Ansible will look for the credentials file path in the environment variable GOOGLE_APPLICATION_CREDENTIALS
-    gcp_cred_file: "{{ lookup('env', 'GOOGLE_APPLICATION_CREDENTIALS') }}"
-    region: "asia-northeast1" # Tokyo
-    zone: "asia-northeast1-a"
+  vars_files:
+    - vars/gcp_config.yml
 
   tasks:
     - name: Create a VPC Network

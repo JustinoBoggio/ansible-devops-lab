@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ ansible_facts["hostname"] }} - Ansible Lab</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 50px; background-color: #202124; color: #fff; }
+        h1 { color: #EA4335; font-size: 3em; }
+        .card { background: #303134; padding: 20px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        code { background: #444; padding: 2px 5px; border-radius: 4px; color: #81C995; }
+    </style>
+</head>
+<body>
+    <h1>¡Hello from {{ region }}! 🇯🇵</h1>
+    <div class="card">
+        <p>This server was configured using <strong>Ansible Roles</strong>.</p>
+        <p>Host: <code>{{ ansible_facts["hostname"] }}</code></p>
+        <p>OS: {{ ansible_facts["distribution"] }} {{ ansible_facts["distribution_version"] }}</p>
+        <p>Public IP: {{ ansible_facts["default_ipv4"]["address"] }}</p>
+    </div>
+</body>
+</html>
