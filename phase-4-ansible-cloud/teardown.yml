@@ -1,5 +1,5 @@
 ---
-- name: Destroy Infrastructure
+- name: Destroy Infrastructure (Save Money!)
   hosts: localhost
   connection: local
   gather_facts: no
@@ -7,7 +7,7 @@
     - vars/gcp_config.yml
 
   tasks:
-    - name: Destroy VM
+    - name: Destroy VM Instance
       google.cloud.gcp_compute_instance:
         name: "{{ vm_name }}"
         zone: "{{ zone }}"
@@ -15,4 +15,18 @@
         auth_kind: "{{ gcp_auth_kind }}"
         service_account_file: "{{ gcp_cred_file }}"
         state: absent
+      register: vm_deleted
 
+    - name: Release Static IP Address
+      google.cloud.gcp_compute_address:
+        name: "ansible-web-ip"
+        region: "{{ region }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: absent
+      when: vm_deleted.changed or vm_deleted.state == 'absent'
+
+    - name: Debug Message
+      debug:
+        msg: "Infrastructure destroyed. Cost is now $0. Sleep well! 🛌"
