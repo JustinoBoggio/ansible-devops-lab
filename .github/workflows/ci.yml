@@ -22,11 +22,12 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install ansible ansible-lint
+          pip install ansible ansible-lint passlib
 
       - name: Create Vault Pass File
         run: |
           echo "${{ secrets.VAULT_PASSWORD }}" > .vault_pass
+          echo "${{ secrets.VAULT_PASSWORD_CLOUD }}" > phase-4-ansible-cloud/.vault_pass
 
       - name: Run Ansible Lint
         run: |
