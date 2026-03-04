@@ -1,0 +1,42 @@
+---
+- name: Install essential packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - git
+    - vim
+    - htop
+    - curl
+    - tree
+    - plocate
+
+- name: Create Developer Users
+  user:
+    name: "{{ item.username }}"
+    shell: /bin/bash
+    groups: "{{ item.groups }}"
+    append: yes # Important to avoid overwriting existing group memberships
+    state: present
+    password: "{{ default_user_password | password_hash('sha512') }}"
+  loop:
+    - { username: 'alice', groups: 'sudo' }
+    - { username: 'bob',   groups: 'www-data' }
+    - { username: 'charlie', groups: 'users' }
+
+# Execute only if the condition is met
+- name: Force Update of 'locate' database (Only on Debian/Ubuntu)
+  command: updatedb
+  when: ansible_facts['os_family'] == "Debian"
+
+# Save the result of the command to a variable
+- name: Check if a reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_file_check
+
+- name: Print a message if reboot is needed
+  debug:
+    msg: "⚠️ A reboot is required to complete the setup. Please reboot the server as soon as possible! ⚠️"
+  when: reboot_file_check.stat.exists

@@ -1,10 +1,11 @@
 ---
 - name: Configure Web Server via Dynamic Inventory
   hosts: gcp_web_server
-  become: yes  # Use sudo
-  gather_facts: no
+  become: true  # Use sudo
+  gather_facts: false
   vars_files:
     - vars/gcp_config.yml
+    - vars/secrets.yml
 
   pre_tasks:
     # Wait until the VM is reachable via SSH (Ansible will keep trying until it succeeds or times out)
@@ -18,4 +19,5 @@
       setup:
 
   roles:
+    - common_setup
     - nginx_website
