@@ -24,8 +24,10 @@ jobs:
       - name: 🔑 Setup SSH Key
         run: |
             mkdir -p ~/.ssh
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/gcp_key.pub
-            chmod 600 ~/.ssh/gcp_key.pub
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/gcp_key
+            chmod 600 ~/.ssh/gcp_key
+
+            ssh-keygen -y -f ~/.ssh/gcp_key > ~/.ssh/gcp_key.pub
 
       - name: 🔐 Setup Vault Password
         run: |
