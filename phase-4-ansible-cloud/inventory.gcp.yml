@@ -2,7 +2,7 @@ plugin: google.cloud.gcp_compute
 projects:
   - ansible-lab-gcp
 auth_kind: serviceaccount
-service_account_file: /home/justino/projects/ansible-devops-lab/phase-4-ansible-cloud/gcp-credentials.json
+service_account_file: gcp-credentials.json
 
 
 keyed_groups:
