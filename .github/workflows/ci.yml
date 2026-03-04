@@ -29,13 +29,26 @@ jobs:
           echo "${{ secrets.VAULT_PASSWORD }}" > .vault_pass
           echo "${{ secrets.VAULT_PASSWORD_CLOUD }}" > phase-4-ansible-cloud/.vault_pass
 
-      - name: Run Ansible Lint
+      - name: Run Ansible Lint (Phase 1)
         run: |
+          cd phase-1-ansible
+          ansible-lint
+        env:
+          ANSIBLE_VAULT_PASSWORD_FILE: ${{ github.workspace }}/.vault_pass
+
+      - name: Run Ansible Lint (Phase 4)
+        run: |
+          cd phase-4-ansible-cloud
           ansible-lint
 
-      - name: Run Ansible Syntax Check
+      - name: Run Ansible Syntax Check (Phase 1)
         run: |
           cd phase-1-ansible
           ansible-playbook site.yml --syntax-check
         env:
           ANSIBLE_VAULT_PASSWORD_FILE: ${{ github.workspace }}/.vault_pass
+
+      - name: Run Ansible Syntax Check (Phase 4)
+        run: |
+          cd phase-4-ansible-cloud
+          ansible-playbook site.yml --syntax-check
