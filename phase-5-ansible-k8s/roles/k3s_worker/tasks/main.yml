@@ -1,0 +1,13 @@
+---
+- name: Extract Internal IP of Master Node
+  # We use hostvar to read the ip address of the Master node from the inventory and set it as a fact to use in the next task
+  set_fact:
+    master_ip: "{{ hostvars['k8s-master-01']['ansible_facts']['default_ipv4']['address'] }}"
+
+- name: Join K3s Worker to the Cluster
+  shell: curl -sfL https://get.k3s.io | sh -
+  environment:
+    K3S_URL: "https://{{ master_ip }}:6443"
+    K3S_TOKEN: "{{ hostvars['k8s-master-01']['k3s_token'] }}"
+  args:
+    creates: /usr/local/bin/k3s

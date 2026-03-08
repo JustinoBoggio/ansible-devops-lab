@@ -1,0 +1,28 @@
+---
+- name: Destroy K8s Infrastructure (FinOps)
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/gcp_config.yml
+
+  tasks:
+    - name: Destroy K8s Instances
+      google.cloud.gcp_compute_instance:
+        name: "{{ item.name }}"
+        zone: "{{ zone }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: absent
+      loop: "{{ k8s_nodes }}"
+
+    - name: Release Static IP Addresses
+      google.cloud.gcp_compute_address:
+        name: "{{ item.name }}-ip"
+        region: "{{ region }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: absent
+      loop: "{{ k8s_nodes }}"

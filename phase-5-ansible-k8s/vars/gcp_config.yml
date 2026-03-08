@@ -1,0 +1,25 @@
+---
+# Global Config
+gcp_project: ansible-lab-gcp
+gcp_auth_kind: serviceaccount
+gcp_cred_file: "{{ lookup('env', 'GOOGLE_APPLICATION_CREDENTIALS') }}"
+region: "us-central1"
+zone: "us-central1-a"
+
+# Infra Config
+vpc_name: "ansible-vpc-network"
+subnet_name: "ansible-subnet"
+
+# e2-micro: 2 vCPU, 1 GB RAM
+machine_type: "e2-micro"
+
+# SSH Config
+ssh_user: "justino"
+ssh_pub_key_file: "~/.ssh/gcp_key.pub"
+
+# Kubernetes Config
+k8s_nodes:
+  - name: "k8s-master-01"
+    role_tag: "k8s-master"
+  - name: "k8s-worker-01"
+    role_tag: "k8s-worker"

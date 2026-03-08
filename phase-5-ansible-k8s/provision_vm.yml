@@ -1,0 +1,55 @@
+---
+- name: Provision Kubernetes Multi-Node Infrastructure
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/gcp_config.yml
+
+  tasks:
+    # Book a Public IP address for the VM
+    - name: Create Static IP addresses for K8s nodes
+      google.cloud.gcp_compute_address:
+        name: "{{ item.name }}-ip"
+        region: "{{ region }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+      loop: "{{ k8s_nodes }}"
+      register: gcp_ips
+
+    # Create the VM Instances for Kubernetes Master and Worker
+    - name: Create K8s Instances
+      google.cloud.gcp_compute_instance:
+        name: "{{ item.name }}"
+        machine_type: "{{ machine_type }}"
+        zone: "{{ zone }}"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        disks:
+          - auto_delete: yes
+            boot: yes
+            initialize_params:
+              source_image: "projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts"
+              disk_size_gb: 25
+        network_interfaces:
+          - network:
+              selfLink: "projects/{{ gcp_project }}/global/networks/{{ vpc_name }}"
+            subnetwork:
+              selfLink: "projects/{{ gcp_project }}/regions/{{ region }}/subnetworks/{{ subnet_name }}"
+            access_configs:
+              - name: External NAT
+                nat_ip: "{{ gcp_ips.results[ansible_loop.index0] }}"
+                type: ONE_TO_ONE_NAT
+        tags:
+          items:
+            - "{{ item.role_tag }}"
+            - "k8s-node"
+        metadata:
+          ssh-keys: "{{ ssh_user }}:{{ lookup('file', ssh_pub_key_file) }}"
+        state: present
+      loop: "{{ k8s_nodes }}"
+      loop_control:
+        extended: yes

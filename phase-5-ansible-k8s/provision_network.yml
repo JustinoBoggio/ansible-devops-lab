@@ -1,0 +1,62 @@
+---
+- name: Provision GCP Network and Firewall for K8s
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/gcp_config.yml
+
+  tasks:
+    - name: Ensure VPC Network exists
+      google.cloud.gcp_compute_network:
+        name: "{{ vpc_name }}"
+        auto_create_subnetworks: 'false' # Important to not create default subnets in all regions
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+      register: gcp_vpc
+
+    - name: Ensure Subnet exists in the target region ({{ region }})
+      google.cloud.gcp_compute_subnetwork:
+        name: "{{ subnet_name }}"
+        region: "{{ region }}"
+        network: "{{ gcp_vpc }}"
+        ip_cidr_range: "10.10.0.0/24"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+
+    - name: Create Firewall Rule for K8s and SSH
+      google.cloud.gcp_compute_firewall:
+        name: "ansible-k8s-firewall"
+        network: "{{ gcp_vpc }}"
+        allowed:
+          - ip_protocol: tcp
+            ports:
+              - "22"    # SSH
+              - "6443"  # Kubernetes API
+              - "80"    # Ingress HTTP
+              - "443"   # Ingress HTTPS
+        source_ranges:
+          - "0.0.0.0/0"
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
+
+    - name: Create Firewall Rule for Internal K8s Communication
+      google.cloud.gcp_compute_firewall:
+        name: "ansible-k8s-allow-internal"
+        network: "{{ gcp_vpc }}"
+        allowed:
+          - ip_protocol: tcp
+          - ip_protocol: udp
+          - ip_protocol: icmp
+        source_ranges:
+          - "10.10.0.0/24" # Subnet CIDR
+        project: "{{ gcp_project }}"
+        auth_kind: "{{ gcp_auth_kind }}"
+        service_account_file: "{{ gcp_cred_file }}"
+        state: present
