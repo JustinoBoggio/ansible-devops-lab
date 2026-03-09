@@ -10,8 +10,8 @@ zone: "us-central1-a"
 vpc_name: "ansible-vpc-network"
 subnet_name: "ansible-subnet"
 
-# e2-micro: 2 vCPU, 1 GB RAM
-machine_type: "e2-micro"
+# e2-medium: 2 vCPU, 4 GB RAM
+machine_type: "e2-medium"
 
 # SSH Config
 ssh_user: "justino"

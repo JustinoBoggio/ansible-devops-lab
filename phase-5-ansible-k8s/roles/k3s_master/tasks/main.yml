@@ -24,3 +24,11 @@
     src: /etc/rancher/k3s/k3s.yaml
     dest: ~/.kube/config_gcp
     flat: yes
+
+- name: Update kubeconfig to use Public IP automatically
+  replace:
+    path: ~/.kube/config_gcp
+    regexp: '127\.0\.0\.1'
+    replace: "{{ ansible_host }}"
+  delegate_to: localhost
+  become: no

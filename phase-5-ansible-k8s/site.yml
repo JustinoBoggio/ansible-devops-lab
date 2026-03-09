@@ -2,11 +2,46 @@
 - name: Configure K3s Master Node
   hosts: k8s-master-01
   become: yes
+  gather_facts: no
+  pre_tasks:
+    - name: Wait for SSH to become available
+      wait_for_connection:
+        delay: 5
+        timeout: 300
+
+    - name: Wait for cloud-init to finish configuring sudo
+      raw: cloud-init status --wait
+      become: no
+      changed_when: false
+
+    - name: Gather facts manually
+      setup:
   roles:
     - k3s_master
 
 - name: Configure K3s Worker Nodes
   hosts: k8s-worker-01
   become: yes
+  gather_facts: no
+  pre_tasks:
+    - name: Wait for SSH to become available
+      wait_for_connection:
+        delay: 5
+        timeout: 300
+
+    - name: Wait for cloud-init to finish configuring sudo
+      raw: cloud-init status --wait
+      become: no
+      changed_when: false
+
+    - name: Gather facts manually
+      setup:
   roles:
     - k3s_worker
+
+- name: Deploy GitOps Tooling (ArgoCD)
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - argocd_setup
