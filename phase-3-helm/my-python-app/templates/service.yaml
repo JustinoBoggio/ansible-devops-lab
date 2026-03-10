@@ -18,4 +18,6 @@ spec:
       # Container port where the Flask app is listening
       targetPort: {{ .Values.service.targetPort }}
       # Fixed static port for external access (e.g., from localhost)
+      {{- if eq .Values.service.type "NodePort" }}
       nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
