@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "my-python-app.fullname" . }}-ingress
+  name: {{ .Chart.Name }}-ingress
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: "traefik"
