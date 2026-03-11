@@ -55,6 +55,7 @@ ansible-playbook teardown.yml
 ## 👤 Author
 
 **Justino Boggio**
+
 *DevSecOps Engineer | Cloud Engineer | SRE | Information Systems Engineer*
 
 [LinkedIn](https://www.linkedin.com/in/justino-boggio-75a932204) | [GitHub](https://github.com/JustinoBoggio)
