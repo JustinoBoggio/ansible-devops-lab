@@ -22,6 +22,8 @@ The goal of this project is to demonstrate production-grade practices, including
 * **Observability:** Kube-Prometheus-Stack (Prometheus, Grafana, Alertmanager)
 * **Ingress Controller:** Traefik
 
+![Technical Architecture: Gitops & Workflow on GCP](./assets/architecture_diagram.png)
+
 ## 🛣️ Project Evolution (Phases)
 
 This lab was built in iterative phases to establish a solid foundation before adding complexity:
